@@ -106,7 +106,8 @@ void blockCheck()
     }
     else
     {
-      initGame();
+      
+      getNewBlock();
     }
   }
 }
