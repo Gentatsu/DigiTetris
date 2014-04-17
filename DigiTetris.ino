@@ -21,7 +21,7 @@ byte numberTable[30]PROGMEM = {
   0b01111110, 0b01000010, 0b01111110, 0b00100010, 0b01111110, 0b00000010, 0b01001110, 0b01001010, 0b01111010, 0b01000010, 0b01001010, 0b01111110, 0b01111000, 0b00001000, 0b01111110, 0b01111010, 0b01001010, 0b01001110, 0b01111110, 0b01001010, 0b01001110, 0b01000000, 0b01000000, 0b01111110, 0b01111110, 0b01001010, 0b01111110, 0b01111010, 0b01001010, 0b01111110};
 int blocks[7][4][2] = {{{0,0},{1,0},{2,0},{3,0}}, {{0,0},{0,1},{1,0},{2,0}}, {{0,0},{1,0},{2,0},{2,1}}, {{0,0},{0,1},{1,0},{1,1}}, {{0,0},{1,0},{1,1},{2,1}}, {{0,0},{1,0},{2,0},{1,1}}, {{0,1},{1,1},{1,0},{2,0}} };
 int currentBlock[4][2];
-int blockHistory[64][2];
+boolean blockHistory[8][8] = {false};
 boolean gameOver = false;
 byte clearedRows = 0;
 byte blockX = 0;
@@ -59,14 +59,6 @@ void check()
   }
 }
 
-void saveGraphics(){
-  digiPixel.clearScreen();
-  for (int i=0; i<4; i++)
-  {
-    digiPixel.setPixel(blockX+currentBlock[i][0], blockY+currentBlock[i][1], 1);
-  }
-}
-
 void playerCheck()
 {
   playerSpeed --;
@@ -100,13 +92,42 @@ void blockCheck()
   if (blockSpeed == 0)
   {
     blockSpeed = blockSpeedSave;
-    if (blockY > 0)
+    int rightX = 0;
+    int leftX = 8;
+    for (int i=0; i<8; i++)
+    {
+      int biggestY = 0; 
+      for (int j=0; j<8; j++)
+      { 
+        if (blockHistory[i][j]) 
+        {
+          if (j > biggestY)
+          {
+            biggestY = j;
+          }
+          if (i > rightX)
+          {
+            rightX = i;
+          }
+          if (i < leftX)
+          {
+            leftX = i;
+          }
+        }
+      }  
+    }
+    if (blockY > 0) 
     {
       blockY--;
     }
     else
     {
-      
+      for (int i=0; i<4; i++)
+      {
+        int x = currentBlock[i][0];
+        int y = currentblock[i][1];
+        blockHistory[x][y] = true;  
+      }
       getNewBlock();
     }
   }
@@ -143,7 +164,7 @@ void showDeath()
 }
 
 void rotate()
-{
+{  
   int originX = (currentBlock[0][0] + currentBlock[1][0] + currentBlock[2][0] + currentBlock[3][0]) / 4;
   int originY = (currentBlock[0][1] + currentBlock[1][1] + currentBlock[2][1] + currentBlock[3][1]) / 4;
   for (int i=0; i<4; i++)
@@ -152,6 +173,24 @@ void rotate()
      int dy = originY - currentBlock[i][1];
      currentBlock[i][0] = originX + dy;
      currentBlock[i][1] = originY + -dx;
+  }
+}
+
+void saveGraphics(){
+  digiPixel.clearScreen();
+  for (int i=0; i<4; i++)
+  {
+    digiPixel.setPixel(blockX+currentBlock[i][0], blockY+currentBlock[i][1], 1);
+  }
+  for (int i=0; i<8;i++)
+  {
+    for (int j=0; j<8; j++)
+    {
+      if (blockHistory[i][j])
+      {
+        digiPixel.setPixel(i, j, 2);
+      }
+    }
   }
 }
 
