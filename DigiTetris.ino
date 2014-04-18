@@ -21,7 +21,7 @@ byte numberTable[30]PROGMEM = {
   0b01111110, 0b01000010, 0b01111110, 0b00100010, 0b01111110, 0b00000010, 0b01001110, 0b01001010, 0b01111010, 0b01000010, 0b01001010, 0b01111110, 0b01111000, 0b00001000, 0b01111110, 0b01111010, 0b01001010, 0b01001110, 0b01111110, 0b01001010, 0b01001110, 0b01000000, 0b01000000, 0b01111110, 0b01111110, 0b01001010, 0b01111110, 0b01111010, 0b01001010, 0b01111110};
 int blocks[7][4][2] = {{{0,0},{1,0},{2,0},{3,0}}, {{0,0},{0,1},{1,0},{2,0}}, {{0,0},{1,0},{2,0},{2,1}}, {{0,0},{0,1},{1,0},{1,1}}, {{0,0},{1,0},{1,1},{2,1}}, {{0,0},{1,0},{2,0},{1,1}}, {{0,1},{1,1},{1,0},{2,0}} };
 int currentBlock[4][2];
-int blockHistory[64][2];
+int blockHistory[8][8];
 boolean gameOver = false;
 byte clearedRows = 0;
 byte blockX = 0;
@@ -72,16 +72,29 @@ void playerCheck()
   playerSpeed --;
   if (playerSpeed == 0)
   {
+    int smallestX = currentBlock[0][0];
+    int biggestX = currentBlock[0][0];
+    for (int i=1; i < 4; i++)
+    {
+      if (currentBlock[i][0] < smallestX)
+      {
+        smallestX = currentBlock[i][0];
+      }
+      if (currentBlock[i][0] > biggestX)
+      {
+        biggestX = currentBlock[i][0];
+      } 
+    }
     if (digiPixel.buttonLeftPressed )
     {
-      if (blockX > 0) 
+      if (blockX + smallestX > 0) 
       {
         blockX --;
       }
     }
     else if (digiPixel.buttonRightPressed )
     {
-      if (blockX < 5)
+      if (blockX + biggestX < 7)
       {
         blockX++;
       } 
@@ -99,8 +112,16 @@ void blockCheck()
   blockSpeed --;
   if (blockSpeed == 0)
   {
+    int smallestY = currentBlock[0][1];
+    for (int i=1; i < 4; i++)
+    {
+      if (currentBlock[i][1] < smallestY)
+      {
+        smallestY = currentBlock[i][1];
+      }
+    }
     blockSpeed = blockSpeedSave;
-    if (blockY > 0)
+    if (blockY + smallestY > 0)
     {
       blockY--;
     }
@@ -152,6 +173,19 @@ void rotate()
      int dy = originY - currentBlock[i][1];
      currentBlock[i][0] = originX + dy;
      currentBlock[i][1] = originY + -dx;
+     while (currentBlock[i][0] + blockX < 0)
+     {
+       blockX++;
+     }
+     while (currentBlock[i][0] + blockX > 7)
+     {
+       blockX--;
+     }
+     while (currentBlock[i][1] + blockY < 0)
+     {
+       blockY++;
+     }
+     
   }
 }
 
