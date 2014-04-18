@@ -21,11 +21,7 @@ byte numberTable[30]PROGMEM = {
   0b01111110, 0b01000010, 0b01111110, 0b00100010, 0b01111110, 0b00000010, 0b01001110, 0b01001010, 0b01111010, 0b01000010, 0b01001010, 0b01111110, 0b01111000, 0b00001000, 0b01111110, 0b01111010, 0b01001010, 0b01001110, 0b01111110, 0b01001010, 0b01001110, 0b01000000, 0b01000000, 0b01111110, 0b01111110, 0b01001010, 0b01111110, 0b01111010, 0b01001010, 0b01111110};
 int blocks[7][4][2] = {{{0,0},{1,0},{2,0},{3,0}}, {{0,0},{0,1},{1,0},{2,0}}, {{0,0},{1,0},{2,0},{2,1}}, {{0,0},{0,1},{1,0},{1,1}}, {{0,0},{1,0},{1,1},{2,1}}, {{0,0},{1,0},{2,0},{1,1}}, {{0,1},{1,1},{1,0},{2,0}} };
 int currentBlock[4][2];
-<<<<<<< HEAD
-int blockHistory[8][8];
-=======
 boolean blockHistory[8][8] = {false};
->>>>>>> 92371c664da77720bb47b164676c4961fa1cd751
 boolean gameOver = false;
 byte clearedRows = 0;
 byte blockX = 0;
@@ -117,9 +113,7 @@ void blockCheck()
       }
     }
     blockSpeed = blockSpeedSave;
-<<<<<<< HEAD
-    if (blockY + smallestY > 0)
-=======
+    //if (blockY + smallestY > 0)
     int rightX = 0;
     int leftX = 8;
     for (int i=0; i<8; i++)
@@ -133,19 +127,18 @@ void blockCheck()
           {
             biggestY = j;
           }
-          if (i > rightX)
-          {
-            rightX = i;
-          }
           if (i < leftX)
           {
             leftX = i;
+          }
+          if (i > rightX)
+          {
+            rightX = i;
           }
         }
       }  
     }
     if (blockY > 0) 
->>>>>>> 92371c664da77720bb47b164676c4961fa1cd751
     {
       blockY--;
     }
@@ -154,7 +147,7 @@ void blockCheck()
       for (int i=0; i<4; i++)
       {
         int x = currentBlock[i][0];
-        int y = currentblock[i][1];
+        int y = currentBlock[i][1];
         blockHistory[x][y] = true;  
       }
       getNewBlock();
